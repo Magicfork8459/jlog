@@ -1,0 +1,8 @@
+# Generated Build Files
+/out/*
+
+# IDE
+/.vscode
+
+# Misc.
+/user
