@@ -80,6 +80,7 @@ namespace silver
                 
                 logger();
                 logger(const boost::filesystem::path& working_directory);
+                logger(const std::string filename, const boost::filesystem::path& working_directory);
                 ~logger();
 
                 //#define LOG_MESSAGE(message, level) { std::stringstream _s; _s << message; Singleton->LogMessage(_s.str().c_str(), level, __FILE__, __LINE__); }

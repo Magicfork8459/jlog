@@ -26,15 +26,14 @@ namespace silver
         severity_levels logger::_severity_level = severity_levels::informational;
         boost::log::sources::severity_logger<severity_levels> logger::_logger = {};    
         //std::set<std::string> Logger::_filenames = {};
-        boost::filesystem::path logger::_working_directory = boost::filesystem::temp_directory_path().append("/Cacophony/Logs");
+        boost::filesystem::path logger::_working_directory = boost::filesystem::temp_directory_path().append("/jlog");
         
         const int logger::INVALID_FILENUMBER = -1;    
         boost::format logger::FILENAME_REGEX_FORMAT = boost::format(".*%1%_[0-9]*.json$");
         boost::format logger::DEFAULT_LOG_FILENAME_FORMAT = boost::format("%1%_%2%.json");
-        std::string logger::_filename = "Cacophony";
+        std::string logger::_filename = "log";
         std::regex logger::FILENAME_REGEX(boost::str( FILENAME_REGEX_FORMAT % logger::_filename));
         const std::regex logger::FILENUMBER_REGEX("[0-9]*.json$");
-        //std::string Logger::_filename = _working_directory.append(boost::str(Logger::DEFAULT_LOG_FILENAME_FORMAT % "Cacophony" % Logger::_current_file_rotation_index));
 
         BOOST_LOG_ATTRIBUTE_KEYWORD(_severity, "Severity", severity_levels);
         BOOST_LOG_ATTRIBUTE_KEYWORD(_timeStamp, "TimeStamp", boost::log::attributes::utc_clock::value_type);
@@ -131,6 +130,13 @@ namespace silver
         {
             //XXX this won't play nice with multiple references
             _working_directory = working_directory;
+            add_reference();
+        }
+
+        logger::logger(const std::string filename, const boost::filesystem::path& working_directory)
+        {
+            _working_directory = working_directory;
+            _filename = filename;
             add_reference();
         }
 
@@ -275,7 +281,16 @@ namespace silver
         {
             //NOTE Make a copy because append modifies in place
             auto tempWorkingDirectory(_working_directory);
-            return tempWorkingDirectory.append(boost::str(DEFAULT_LOG_FILENAME_FORMAT % _filename % _current_file_rotation_index++));
+            
+            tempWorkingDirectory = tempWorkingDirectory.append(boost::str(DEFAULT_LOG_FILENAME_FORMAT % _filename % _current_file_rotation_index++));
+
+            if(not boost::filesystem::exists(_working_directory))
+            {
+                //TODO permission checks
+                boost::filesystem::create_directory(_working_directory);
+            }
+
+            return tempWorkingDirectory;
         }
 
         bool logger::close_out(const boost::filesystem::path& target, bool sizeCheck)

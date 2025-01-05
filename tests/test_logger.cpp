@@ -111,7 +111,7 @@ struct logger_test_fixture
 //TODO test the macros
 
 // //TODO improve this later with reflection stuff
-BOOST_FIXTURE_TEST_CASE(FileLogger, logger_test_fixture)
+BOOST_FIXTURE_TEST_CASE(file_logger, logger_test_fixture)
 {
     logtest_records();
 
@@ -178,7 +178,7 @@ BOOST_FIXTURE_TEST_CASE(FileLogger, logger_test_fixture)
     }
 }
 
-BOOST_FIXTURE_TEST_CASE(severity_levelFilter, logger_test_fixture)
+BOOST_FIXTURE_TEST_CASE(severity_level_filter, logger_test_fixture)
 {
     boost::mp11::mp_for_each<boost::describe::describe_enumerators<severity_levels>>(
         [&](auto description)
@@ -225,7 +225,7 @@ BOOST_FIXTURE_TEST_CASE(severity_levelFilter, logger_test_fixture)
         });
 }
 
-BOOST_FIXTURE_TEST_CASE(FileRotation, logger_test_fixture, * boost::unit_test_framework::timeout(5))
+BOOST_FIXTURE_TEST_CASE(file_rotation, logger_test_fixture, * boost::unit_test_framework::timeout(5))
 {
     logger.file_size(1024);
     const size_t maxRotations = logger.maximum_file_count();
@@ -285,6 +285,13 @@ BOOST_FIXTURE_TEST_CASE(FileRotation, logger_test_fixture, * boost::unit_test_fr
     }
 
     BOOST_REQUIRE(fileCount <= maxRotations);    
+}
+
+BOOST_AUTO_TEST_CASE(construct_working_directory_filepath)
+{
+    logger logger("test_log_file", "c:\\test_jlog");
+    logger.informational("Test");   
+    logger.rotate(); 
 }
 
 BOOST_AUTO_TEST_SUITE_END()
