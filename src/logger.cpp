@@ -16,6 +16,7 @@ namespace silver
         const std::string logger::JSON_ATTRIBUTE_SOURCE_FILE("source_file");
         const std::string logger::JSON_ATTRIBUTE_SOURCE_LINE_NUMBER("source_line");
         const std::string logger::JSON_ATTRIBUTE_MESSAGE("message");
+        const boost::filesystem::path logger::DEFAULT_WORKING_DIRECTORY(boost::filesystem::temp_directory_path().append("/jlog"));
 
         size_t logger::_references = 0;
         text_sink_ptr logger::_console_sink = NULL;
@@ -26,7 +27,7 @@ namespace silver
         severity_levels logger::_severity_level = severity_levels::informational;
         boost::log::sources::severity_logger<severity_levels> logger::_logger = {};    
         //std::set<std::string> Logger::_filenames = {};
-        boost::filesystem::path logger::_working_directory = boost::filesystem::temp_directory_path().append("/jlog");
+        boost::filesystem::path logger::_working_directory = DEFAULT_WORKING_DIRECTORY;
         
         const int logger::INVALID_FILENUMBER = -1;    
         boost::format logger::FILENAME_REGEX_FORMAT = boost::format(".*%1%_[0-9]*.json$");
@@ -281,7 +282,10 @@ namespace silver
         {
             //NOTE Make a copy because append modifies in place
             auto tempWorkingDirectory(_working_directory);
-            
+            if(_filename.ends_with(".json"))
+            {
+                _filename.erase(_filename.find_last_of('.'));
+            }
             tempWorkingDirectory = tempWorkingDirectory.append(boost::str(DEFAULT_LOG_FILENAME_FORMAT % _filename % _current_file_rotation_index++));
 
             if(not boost::filesystem::exists(_working_directory))
@@ -403,6 +407,24 @@ namespace silver
         size_t logger::maximum_file_count()
         {
             return _file_count_limit;
+        }
+
+        boost::filesystem::path logger::current_log_file()
+        {
+            return _file_sink->locked_backend()->get_current_file_name();
+        }
+
+        void logger::clear_working_directory() noexcept
+        {
+            try
+            {
+                rotate();
+                boost::filesystem::remove_all(_working_directory);
+            }
+            catch(const boost::filesystem::filesystem_error& exception)
+            {
+                std::cerr << "The following exception was thrown while trying to empty the working directory: " << exception.what() << std::endl;
+            }
         }
     }    
 }

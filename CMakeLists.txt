@@ -26,23 +26,41 @@ find_package(Boost REQUIRED COMPONENTS log log_setup unit_test_framework json)
     )
 
 # Setup Tests
-    set(TEST_PROJECT_NAME test_${PROJECT_NAME})
-
-    add_executable(${TEST_PROJECT_NAME}
-        ${PROJECT_SOURCE_DIR}/tests/test_logger.cpp
+    add_executable(jlog_test_file_logs
+        ${PROJECT_SOURCE_DIR}/tests/file_logs.cpp
+        ${PROJECT_SOURCE_DIR}/tests/fixture.hpp
     )
 
-    target_include_directories(${TEST_PROJECT_NAME} PUBLIC
+    target_include_directories(jlog_test_file_logs PUBLIC
         ${Boost_INCLUDE_DIRS}   
         ${PROJECT_SOURCE_DIR}/src     
     )
 
-    target_link_libraries(${TEST_PROJECT_NAME}
+    target_link_libraries(jlog_test_file_logs
         ${Boost_LIBRARIES}
         ${PROJECT_NAME}
     )
 
-    set_target_properties(${TEST_PROJECT_NAME} PROPERTIES
+    set_target_properties(jlog_test_file_logs PROPERTIES
+        LINKER_LANGUAGE CXX
+        CXX_STANDARD 23
+    )
+
+    add_executable(jlog_test_constructors
+        ${PROJECT_SOURCE_DIR}/tests/constructors.cpp
+    )
+
+    target_include_directories(jlog_test_constructors PUBLIC
+        ${Boost_INCLUDE_DIRS}   
+        ${PROJECT_SOURCE_DIR}/src     
+    )
+
+    target_link_libraries(jlog_test_constructors
+        ${Boost_LIBRARIES}
+        ${PROJECT_NAME}
+    )
+
+    set_target_properties(jlog_test_constructors PROPERTIES
         LINKER_LANGUAGE CXX
         CXX_STANDARD 23
     )
@@ -50,4 +68,5 @@ find_package(Boost REQUIRED COMPONENTS log log_setup unit_test_framework json)
     #TODO make this optional
     enable_testing()
 
-    add_test(NAME "JLog Tests" COMMAND ${TEST_PROJECT_NAME})
+    add_test(NAME "file_logs" COMMAND jlog_test_file_logs)
+    add_test(NAME "constructors" COMMAND jlog_test_constructors)

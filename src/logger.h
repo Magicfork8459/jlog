@@ -77,6 +77,7 @@ namespace silver
                 static const std::string JSON_ATTRIBUTE_SOURCE_FILE;
                 static const std::string JSON_ATTRIBUTE_SOURCE_LINE_NUMBER;
                 static const std::string JSON_ATTRIBUTE_MESSAGE;
+                static const boost::filesystem::path DEFAULT_WORKING_DIRECTORY;
                 
                 logger();
                 logger(const boost::filesystem::path& working_directory);
@@ -114,6 +115,8 @@ namespace silver
                 static boost::filesystem::path working_directory();
                 static void maximum_file_count(const size_t& value);
                 static size_t maximum_file_count();
+                static boost::filesystem::path current_log_file();
+                static void clear_working_directory() noexcept;
                 
             protected:
                 static void formatter(const boost::log::record_view& recordView, boost::log::formatting_ostream& stream);
