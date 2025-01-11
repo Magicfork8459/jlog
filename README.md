@@ -2,8 +2,8 @@
  
 ## Dependencies
 
-[Boost Libraries](https://www.boost.org)
-[CMake](https://cmake.org)
+- [Boost Libraries](https://www.boost.org)
+- [CMake](https://cmake.org)
 
 ## About
 
