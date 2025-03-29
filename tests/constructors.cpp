@@ -5,7 +5,7 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/json.hpp>
 
-#include "logger.h"
+#include <silver/jlog/logger.h>
 
 //TODO test changing severity level
 //TODO config file support

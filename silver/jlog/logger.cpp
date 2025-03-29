@@ -1,4 +1,4 @@
-#include "logger.h"
+#include <silver/jlog/logger.h>
 
 //TODO configuration stuff
 //TODO log to syslog server
